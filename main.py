@@ -30,13 +30,11 @@ def generate_content(client, messages, verbose):
     )
     if not response.usage_metadata:
         raise RuntimeError("Gemeni API Metadata Request Failed")
-
     if verbose:
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
     print("Response:")
     print(response.text)
-
 
 if __name__ == "__main__":
     main()
