@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from prompts import system_prompt
+from call_functions import available_functions
 
 def main():
     parser = argparse.ArgumentParser(description="Chatbot")
@@ -28,15 +29,19 @@ def generate_content(client, messages, verbose):
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=messages,
-        config=types.GenerateContentConfig(system_instruction=system_prompt, temperature=0),
+        config=types.GenerateContentConfig(tools=[available_functions], system_instruction=system_prompt, temperature=0),
     )
     if not response.usage_metadata:
         raise RuntimeError("Gemeni API Metadata Request Failed")
     if verbose:
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-    print("Response:")
-    print(response.text)
+    if response.function_calls:
+        for f in response.function_calls:
+            print(f"Calling function: {f.name}({f.args})")
+    else:
+        print("Response:")
+        print(response.text)
 
 if __name__ == "__main__":
     main()
