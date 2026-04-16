@@ -11,3 +11,6 @@ wheels/
 
 #Credentials
 .env
+
+#custom files
+prompt-engineering-guide.md
